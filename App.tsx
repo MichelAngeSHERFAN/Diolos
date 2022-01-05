@@ -4,6 +4,9 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import SafeAreaView from 'react-native-safe-area-view';
 import {WebView} from 'react-native-webview';
 
+const INJECTEDJAVASCRIPT = 'const meta = document.createElement(\'meta\'); meta.setAttribute(\'content\', \'width=800, initial-scale=0.5, maximum-scale=0.99, user-scalable=0\'); meta.setAttribute(\'name\', \'viewport\'); document.getElementsByTagName(\'head\')[0].appendChild(meta); '
+
+
 const App = () => {
   return (
     <SafeAreaProvider>
@@ -15,9 +18,15 @@ const App = () => {
         ) : (
           StatusBar.setBarStyle('light-content', true)
         )}
-        <Text>test</Text>
+        {/*<Text>test</Text>*/}
         <View style={styles.Container}>
-          <WebView source={{uri: 'https://google.com/'}} />
+          <WebView
+            injectedJavaScript={INJECTEDJAVASCRIPT}
+            // scalesPageToFit={false}
+            javaScriptEnabled={true}
+            // scrollEnabled
+            source={{uri: 'https://diolos.com/'}}
+          />
         </View>
       </SafeAreaView>
     </SafeAreaProvider>
@@ -30,9 +39,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#007fcb',
   },
   Container: {
-    borderWidth: 1,
+    // borderWidth: 1,
     // borderColor: '#007fcb',
-    borderColor: 'red',
+    // borderColor: 'red',
     width: '100%',
     height: '100%',
   },
