@@ -40,13 +40,17 @@ const App = () => {
           />
         </View>
         {(url !== "https://diolos.com/" && url !== "https://diolos.com/index.php") &&
-        <TouchableOpacity onPress={onBack} style={{position: "absolute", top: 0 + 50, left: 25, width: 30, height: 30, backgroundColor: 'transparent'}}>
-          {/*<View>*/}
+        (
+        Platform.OS === 'ios' ? (
+          <TouchableOpacity onPress={onBack} style={{position: "absolute", top: 0 + 50, left: 25, width: 30, height: 30, backgroundColor: 'transparent'}}>
             <Image source={require("./Assets/left-arrow.png")} style={{ width: 30, height: 30 }} />
-            {/*<Text>B</Text>*/}
-            {/*<Icon name="home" size={30} color="#900" />*/}
-          {/*</View>*/}
-        </TouchableOpacity>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={onBack} style={{position: "absolute", top: 0, left: 25, width: 30, height: 30, backgroundColor: 'transparent'}}>
+            <Image source={require("./Assets/left-arrow.png")} style={{ width: 30, height: 30 }} />
+          </TouchableOpacity>
+        )
+        )
         }
       </SafeAreaView>
     </SafeAreaProvider>
