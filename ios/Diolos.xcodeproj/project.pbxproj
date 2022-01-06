@@ -143,7 +143,6 @@
 			children = (
 			);
 			name = Resources;
-			path = "";
 			sourceTree = "<group>";
 		};
 		E233CBF5F47BEE60B243DCF8 /* Pods */ = {
@@ -154,7 +153,6 @@
 				6C97AB639B58BBB4B15BBE30 /* Pods-Diolos-DiolosTests.debug.xcconfig */,
 				1D0AE47A65C8663E3B452821 /* Pods-Diolos-DiolosTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};

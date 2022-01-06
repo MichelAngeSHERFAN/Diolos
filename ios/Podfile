@@ -13,6 +13,8 @@ target 'Diolos' do
   )
 
 
+  pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
+
   target 'DiolosTests' do
     inherit! :complete
     # Pods for testing
