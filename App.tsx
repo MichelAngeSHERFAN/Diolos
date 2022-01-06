@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { StyleSheet, View, StatusBar, Platform, Button, Alert, TouchableOpacity, Text, Image } from "react-native";
+import { StyleSheet, View, StatusBar, Platform, Button, Alert, TouchableOpacity, Text, Image, NativeModules } from "react-native";
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import SafeAreaView from 'react-native-safe-area-view';
 import {WebView} from 'react-native-webview';
 import { useRef, useState } from "react";
-
-// import Icon from 'react-native-vector-icons/FontAwesome';
-
+import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 // const INJECTEDJAVASCRIPT = 'const meta = document.createElement(\'meta\'); meta.setAttribute(\'content\', \'width=800, initial-scale=0.5, maximum-scale=0.99, user-scalable=0\'); meta.setAttribute(\'name\', \'viewport\'); document.getElementsByTagName(\'head\')[0].appendChild(meta); '
 
@@ -42,11 +40,11 @@ const App = () => {
         {(url !== "https://diolos.com/" && url !== "https://diolos.com/index.php") &&
         (
         Platform.OS === 'ios' ? (
-          <TouchableOpacity onPress={onBack} style={{position: "absolute", top: 0 + 50, left: 25, width: 30, height: 30, backgroundColor: 'transparent'}}>
+          <TouchableOpacity onPress={onBack} style={{position: "absolute", top: getStatusBarHeight() + 10, left: 25, width: 30, height: 30, backgroundColor: 'transparent'}}>
             <Image source={require("./Assets/left-arrow.png")} style={{ width: 30, height: 30 }} />
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity onPress={onBack} style={{position: "absolute", top: 0, left: 25, width: 30, height: 30, backgroundColor: 'transparent'}}>
+          <TouchableOpacity onPress={onBack} style={{position: "absolute", top: getStatusBarHeight(true), left: 25, width: 30, height: 30, backgroundColor: 'transparent'}}>
             <Image source={require("./Assets/left-arrow.png")} style={{ width: 30, height: 30 }} />
           </TouchableOpacity>
         )
