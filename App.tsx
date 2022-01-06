@@ -44,7 +44,7 @@ const App = () => {
             <Image source={require("./Assets/left-arrow.png")} style={{ width: 30, height: 30 }} />
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity onPress={onBack} style={{position: "absolute", top: getStatusBarHeight(true), left: 25, width: 30, height: 30, backgroundColor: 'transparent'}}>
+          <TouchableOpacity onPress={onBack} style={{position: "absolute", top: getStatusBarHeight(true) + 10, left: 25, width: 30, height: 30, backgroundColor: 'transparent'}}>
             <Image source={require("./Assets/left-arrow.png")} style={{ width: 30, height: 30 }} />
           </TouchableOpacity>
         )
