@@ -5,7 +5,7 @@ import SafeAreaView from 'react-native-safe-area-view';
 import {WebView} from 'react-native-webview';
 import { useEffect, useRef, useState } from "react";
 import { getStatusBarHeight } from 'react-native-status-bar-height';
-import SplashScreen from 'react-native-splash-screen'
+import OneSignal from 'react-native-onesignal';
 
 // const INJECTEDJAVASCRIPT = 'const meta = document.createElement(\'meta\'); meta.setAttribute(\'content\', \'width=800, initial-scale=0.5, maximum-scale=0.99, user-scalable=0\'); meta.setAttribute(\'name\', \'viewport\'); document.getElementsByTagName(\'head\')[0].appendChild(meta); '
 
@@ -14,7 +14,36 @@ const App = () => {
   const [url, setUrl] = useState("")
 
   useEffect(() => {
-    SplashScreen.hide();
+    //OneSignal Init Code
+    OneSignal.setLogLevel(6, 0);
+    OneSignal.setAppId("ef3cfea0-b08d-42d5-8437-ae2393a2e1ab");
+    //END OneSignal Init Code
+
+    console.log("TEEEEEEST", OneSignal.getDeviceState());
+
+    if (Platform.OS === 'ios') {
+      //Prompt for push on iOS
+      console.log("Prompt for push on iOS");
+      OneSignal.promptForPushNotificationsWithUserResponse(response => {
+        console.log("Prompt response:", response);
+      });
+    }
+
+    //Method for handling notifications received while app in foreground
+    OneSignal.setNotificationWillShowInForegroundHandler(notificationReceivedEvent => {
+      console.log("OneSignal: notification will show in foreground:", notificationReceivedEvent);
+      let notification = notificationReceivedEvent.getNotification();
+      console.log("notification: ", notification);
+      const data = notification.additionalData
+      console.log("additionalData: ", data);
+      // Complete with null means don't show a notification.
+      notificationReceivedEvent.complete(notification);
+    });
+
+    //Method for handling notifications opened
+    OneSignal.setNotificationOpenedHandler(notification => {
+      console.log("OneSignal: notification opened:", notification);
+    });
   }, []);
 
   const onBack = () => {
