@@ -1,17 +1,17 @@
-import * as React from 'react';
-import { StyleSheet, View, StatusBar, Platform, Button, Alert, TouchableOpacity, Text, Image, NativeModules } from "react-native";
-import {SafeAreaProvider} from 'react-native-safe-area-context';
-import SafeAreaView from 'react-native-safe-area-view';
-import {WebView} from 'react-native-webview';
+import * as React from "react";
 import { useEffect, useRef, useState } from "react";
-import { getStatusBarHeight } from 'react-native-status-bar-height';
-import OneSignal from 'react-native-onesignal';
+import { Image, Platform, StatusBar, StyleSheet, TouchableOpacity, View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import SafeAreaView from "react-native-safe-area-view";
+import { WebView } from "react-native-webview";
+import { getStatusBarHeight } from "react-native-status-bar-height";
+import OneSignal from "react-native-onesignal";
 
 // const INJECTEDJAVASCRIPT = 'const meta = document.createElement(\'meta\'); meta.setAttribute(\'content\', \'width=800, initial-scale=0.5, maximum-scale=0.99, user-scalable=0\'); meta.setAttribute(\'name\', \'viewport\'); document.getElementsByTagName(\'head\')[0].appendChild(meta); '
 
 const App = () => {
-  const webviewRef = useRef<WebView>(null)
-  const [url, setUrl] = useState("")
+  const webviewRef = useRef<WebView>(null);
+  const [url, setUrl] = useState("");
 
   useEffect(() => {
     //OneSignal Init Code
@@ -19,14 +19,16 @@ const App = () => {
     OneSignal.setAppId("ef3cfea0-b08d-42d5-8437-ae2393a2e1ab");
     //END OneSignal Init Code
 
-    console.log("TEEEEEEST", OneSignal.getDeviceState());
-
-    if (Platform.OS === 'ios') {
+    console.log("OneSignal.getDeviceState => ", OneSignal.getDeviceState());
+    if (Platform.OS === "ios") {
       //Prompt for push on iOS
+      console.log("On iOS device");
       console.log("Prompt for push on iOS");
       OneSignal.promptForPushNotificationsWithUserResponse(response => {
         console.log("Prompt response:", response);
       });
+    } else {
+      console.log("On Android device");
     }
 
     //Method for handling notifications received while app in foreground
@@ -67,8 +69,14 @@ const App = () => {
             // injectedJavaScript={INJECTEDJAVASCRIPT}
             // scalesPageToFit={false}
             // javaScriptEnabled={true}
-            // scrollEnabled
-            source={{uri: 'https://diolos.com/'}}
+            scrollEnabled={true}
+            source={{
+              uri: "https://diolos.com/", headers: {
+                "Accept-Language": "fr",
+              },
+            }}
+            allowsBackForwardNavigationGestures={true}
+            startInLoadingState={true}
           />
         </View>
         {(url !== "https://diolos.com/" && url !== "https://diolos.com/index.php") &&
