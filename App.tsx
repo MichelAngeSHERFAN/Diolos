@@ -77,6 +77,7 @@ const App = () => {
             }}
             allowsBackForwardNavigationGestures={true}
             startInLoadingState={true}
+            pullToRefreshEnabled={true}
           />
         </View>
         {(url !== "https://diolos.com/" && url !== "https://diolos.com/index.php") &&
