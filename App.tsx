@@ -5,13 +5,14 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import SafeAreaView from "react-native-safe-area-view";
 import { WebView } from "react-native-webview";
 import { getStatusBarHeight } from "react-native-status-bar-height";
-import OneSignal from "react-native-onesignal";
+import OneSignal, { OpenedEvent } from "react-native-onesignal";
 
 // const INJECTEDJAVASCRIPT = 'const meta = document.createElement(\'meta\'); meta.setAttribute(\'content\', \'width=800, initial-scale=0.5, maximum-scale=0.99, user-scalable=0\'); meta.setAttribute(\'name\', \'viewport\'); document.getElementsByTagName(\'head\')[0].appendChild(meta); '
 
 const App = () => {
   const webviewRef = useRef<WebView>(null);
   const [url, setUrl] = useState("");
+  const [siteUri, setSiteUri] = useState("https://diolos.com/");
 
   useEffect(() => {
     //OneSignal Init Code
@@ -42,11 +43,18 @@ const App = () => {
       notificationReceivedEvent.complete(notification);
     });
 
-    //Method for handling notifications opened
-    OneSignal.setNotificationOpenedHandler(notification => {
-      console.log("OneSignal: notification opened:", notification);
-    });
+    OneSignal.setNotificationOpenedHandler(onClickNotification)
+
   }, []);
+
+  const onClickNotification = (openedEvent: OpenedEvent) => {
+    if (openedEvent.notification.launchURL) {
+      console.log("openedEvent.notification.launchURL ==> ", openedEvent.notification.launchURL);
+      setSiteUri(openedEvent.notification.launchURL)
+    } else {
+      console.log("openedEvent.notification.launchURL ==> NULL");
+    }
+  };
 
   const onBack = () => {
     webviewRef?.current?.goBack()
@@ -71,7 +79,8 @@ const App = () => {
             // javaScriptEnabled={true}
             scrollEnabled={true}
             source={{
-              uri: "https://diolos.com/", headers: {
+              uri: siteUri,
+              headers: {
                 "Accept-Language": "fr",
               },
             }}
@@ -83,9 +92,10 @@ const App = () => {
         {(url !== "https://diolos.com/" && url !== "https://diolos.com/index.php") &&
         (
         Platform.OS === 'ios' ? (
-          <TouchableOpacity onPress={onBack} style={{position: "absolute", top: getStatusBarHeight() + 7, left: 25, width: 30, height: 30, backgroundColor: 'transparent'}}>
-            <Image source={require("./Assets/left-arrow.png")} style={{ width: 30, height: 30 }} />
-          </TouchableOpacity>
+          <></>
+          // <TouchableOpacity onPress={onBack} style={{position: "absolute", top: getStatusBarHeight() + 7, left: 25, width: 30, height: 30, backgroundColor: 'transparent'}}>
+          //   <Image source={require("./Assets/left-arrow.png")} style={{ width: 30, height: 30 }} />
+          // </TouchableOpacity>
         ) : (
           <TouchableOpacity onPress={onBack} style={{position: "absolute", top: getStatusBarHeight(true) + 7, left: 25, width: 30, height: 30, backgroundColor: 'transparent'}}>
             <Image source={require("./Assets/left-arrow.png")} style={{ width: 30, height: 30 }} />
