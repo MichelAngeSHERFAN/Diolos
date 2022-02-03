@@ -1,17 +1,16 @@
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
-import { Image, Platform, StatusBar, StyleSheet, TouchableOpacity, View } from "react-native";
+import { BackHandler, Platform, StatusBar, StyleSheet, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import SafeAreaView from "react-native-safe-area-view";
 import { WebView } from "react-native-webview";
-import { getStatusBarHeight } from "react-native-status-bar-height";
 import OneSignal, { OpenedEvent } from "react-native-onesignal";
 
-// const INJECTEDJAVASCRIPT = 'const meta = document.createElement(\'meta\'); meta.setAttribute(\'content\', \'width=800, initial-scale=0.5, maximum-scale=0.99, user-scalable=0\'); meta.setAttribute(\'name\', \'viewport\'); document.getElementsByTagName(\'head\')[0].appendChild(meta); '
+let currentUrl = "https://diolos.com/";
 
 const App = () => {
   const webviewRef = useRef<WebView>(null);
-  const [url, setUrl] = useState("");
+  const [url, setUrl] = useState("https://diolos.com/");
   const [siteUri, setSiteUri] = useState("https://diolos.com/");
 
   useEffect(() => {
@@ -37,13 +36,33 @@ const App = () => {
       console.log("OneSignal: notification will show in foreground:", notificationReceivedEvent);
       let notification = notificationReceivedEvent.getNotification();
       console.log("notification: ", notification);
-      const data = notification.additionalData
+      const data = notification.additionalData;
       console.log("additionalData: ", data);
       // Complete with null means don't show a notification.
       notificationReceivedEvent.complete(notification);
     });
 
-    OneSignal.setNotificationOpenedHandler(onClickNotification)
+    OneSignal.setNotificationOpenedHandler(onClickNotification);
+
+    const backAction = () => {
+      if (currentUrl === "https://diolos.com/" || currentUrl === "https://diolos.com/index.php") {
+        console.warn("IF", url);
+        BackHandler.exitApp();
+        return false;
+      } else {
+        // goBack()
+        console.warn("ELSE", url);
+        webviewRef?.current?.goBack();
+        return true;
+      }
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction,
+    );
+
+    return () => backHandler.remove();
 
   }, []);
 
@@ -56,9 +75,7 @@ const App = () => {
     }
   };
 
-  const onBack = () => {
-    webviewRef?.current?.goBack()
-  }
+  console.warn("URL => ", url);
 
   return (
     <SafeAreaProvider>
@@ -72,7 +89,10 @@ const App = () => {
         )}
         <View style={styles.Container}>
           <WebView
-            onLoad={e => setUrl(e.nativeEvent.url)}
+            onLoad={e => {
+              setUrl(e.nativeEvent.url);
+              currentUrl = e.nativeEvent.url;
+            }}
             ref={webviewRef}
             // injectedJavaScript={INJECTEDJAVASCRIPT}
             // scalesPageToFit={false}
@@ -89,20 +109,17 @@ const App = () => {
             pullToRefreshEnabled={true}
           />
         </View>
-        {(url !== "https://diolos.com/" && url !== "https://diolos.com/index.php") &&
-        (
-        Platform.OS === 'ios' ? (
-          <></>
-          // <TouchableOpacity onPress={onBack} style={{position: "absolute", top: getStatusBarHeight() + 7, left: 25, width: 30, height: 30, backgroundColor: 'transparent'}}>
-          //   <Image source={require("./Assets/left-arrow.png")} style={{ width: 30, height: 30 }} />
-          // </TouchableOpacity>
-        ) : (
-          <TouchableOpacity onPress={onBack} style={{position: "absolute", top: getStatusBarHeight(true) + 7, left: 25, width: 30, height: 30, backgroundColor: 'transparent'}}>
-            <Image source={require("./Assets/left-arrow.png")} style={{ width: 30, height: 30 }} />
-          </TouchableOpacity>
-        )
-        )
-        }
+        {/*{(url !== "https://diolos.com/" && url !== "https://diolos.com/index.php") &&*/}
+        {/*(*/}
+        {/*Platform.OS === 'ios' ? (*/}
+        {/*  <TouchableOpacity onPress={onBack} style={{position: "absolute", top: getStatusBarHeight() + 7, left: 25, width: 30, height: 30, backgroundColor: 'transparent'}}>*/}
+        {/*    <Image source={require("./Assets/left-arrow.png")} style={{ width: 30, height: 30 }} />*/}
+        {/*  </TouchableOpacity>*/}
+        {/*) : (*/}
+        {/*  <TouchableOpacity onPress={onBack} style={{position: "absolute", top: getStatusBarHeight(true) + 7, left: 25, width: 30, height: 30, backgroundColor: 'transparent'}}>*/}
+        {/*    <Image source={require("./Assets/left-arrow.png")} style={{ width: 30, height: 30 }} />*/}
+        {/*  </TouchableOpacity>*/}
+        {/*))}*/}
       </SafeAreaView>
     </SafeAreaProvider>
   );
