@@ -69,7 +69,8 @@ const App = () => {
   const onClickNotification = (openedEvent: OpenedEvent) => {
     if (openedEvent.notification.launchURL) {
       console.log("openedEvent.notification.launchURL ==> ", openedEvent.notification.launchURL);
-      setSiteUri(openedEvent.notification.launchURL)
+      setSiteUri(`${openedEvent.notification.launchURL || "https://diolos.com"}?d=${new Date().getTime()}`)
+      // setTimeout(() => setSiteUri(`${openedEvent.notification.launchURL || "https://diolos.com"}?d=${(new Date()).toISOString()}`), 500)
     } else {
       console.log("openedEvent.notification.launchURL ==> NULL");
     }
