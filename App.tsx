@@ -12,6 +12,9 @@ const App = () => {
   const webviewRef = useRef<WebView>(null);
   const [url, setUrl] = useState("https://diolos.com/");
   const [siteUri, setSiteUri] = useState("https://diolos.com/");
+  const [myDeviceUserID, setMyDeviceUserID] = useState("");
+
+  let tmpDeviceUserId: string | null | undefined = null;
 
   useEffect(() => {
     //OneSignal Init Code
@@ -19,7 +22,32 @@ const App = () => {
     OneSignal.setAppId("ef3cfea0-b08d-42d5-8437-ae2393a2e1ab");
     //END OneSignal Init Code
 
-    console.log("OneSignal.getDeviceState => ", OneSignal.getDeviceState());
+    // OneSignal.addPermissionObserver(event => {
+    //   console.log("OneSignal: permission changed:", event);
+    // });
+    //
+    // OneSignal.addSubscriptionObserver(event => {
+    //   console.log("OneSignal: subscription changed event:", event);
+    //   console.log("OneSignal: subscription changed from userId:", event.from.userId);
+    //   console.log("OneSignal: subscription changed to userId:", event.to.userId);
+    //   console.log("OneSignal: subscription changed from pushToken:", event.from.pushToken);
+    //   console.log("OneSignal: subscription changed to pushToken:", event.to.pushToken);
+    //   console.log("OneSignal: subscription changed from isPushDisabled:", event.from.isPushDisabled);
+    //   console.log("OneSignal: subscription changed to isPushDisabled:", event.to.isPushDisabled);
+    //   console.log("OneSignal: subscription changed from isSubscribed:", event.from.isSubscribed);
+    //   console.log("OneSignal: subscription changed to isSubscribed:", event.to.isSubscribed);
+    // });
+
+    const getDeviceUserID = async () => {
+      // console.log("OneSignal.getDeviceState111 => ", (await OneSignal.getDeviceState())?.userId);
+      tmpDeviceUserId = (await OneSignal.getDeviceState())?.userId;
+      // console.warn("tmpDeviceUserId after => ", tmpDeviceUserId);
+      tmpDeviceUserId && setMyDeviceUserID(tmpDeviceUserId);
+    };
+    getDeviceUserID().then();
+
+    // console.log("OneSignal.getDeviceState => ", OneSignal.getDeviceState());
+
     if (Platform.OS === "ios") {
       //Prompt for push on iOS
       console.log("On iOS device");
@@ -69,24 +97,27 @@ const App = () => {
   const onClickNotification = (openedEvent: OpenedEvent) => {
     if (openedEvent.notification.launchURL) {
       console.log("openedEvent.notification.launchURL ==> ", openedEvent.notification.launchURL);
-      setSiteUri(`${openedEvent.notification.launchURL || "https://diolos.com"}?d=${new Date().getTime()}`)
+      setSiteUri(`${openedEvent.notification.launchURL || "https://diolos.com"}?d=${new Date().getTime()}`);
       // setTimeout(() => setSiteUri(`${openedEvent.notification.launchURL || "https://diolos.com"}?d=${(new Date()).toISOString()}`), 500)
     } else {
       console.log("openedEvent.notification.launchURL ==> NULL");
     }
   };
 
-  console.warn("URL => ", url);
+  console.log("URL => ", url);
+  console.log("myDeviceUserID1 => ", myDeviceUserID);
+  // tmpDeviceUserId && setMyDeviceUserID(tmpDeviceUserId);
+  // console.log("myDeviceUserID2 => ", myDeviceUserID);
 
   return (
     <SafeAreaProvider>
       <SafeAreaView
-        forceInset={{top: 'always', bottom: 'never'}}
-        style={Platform.OS === 'ios' ? styles.StatusBarForIos : null}>
-        {Platform.OS === 'android' ? (
-          <StatusBar backgroundColor={'#007fcb'} />
+        forceInset={{ top: "always", bottom: "never" }}
+        style={Platform.OS === "ios" ? styles.StatusBarForIos : null}>
+        {Platform.OS === "android" ? (
+          <StatusBar backgroundColor={"#007fcb"} />
         ) : (
-          StatusBar.setBarStyle('light-content', true)
+          StatusBar.setBarStyle("light-content", true)
         )}
         <View style={styles.Container}>
           <WebView
@@ -103,6 +134,7 @@ const App = () => {
               uri: siteUri,
               headers: {
                 "Accept-Language": "fr",
+                "OneSignalUserId": myDeviceUserID,
               },
             }}
             allowsBackForwardNavigationGestures={true}
