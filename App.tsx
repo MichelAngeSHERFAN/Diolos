@@ -14,6 +14,9 @@ const App = () => {
   const [siteUri, setSiteUri] = useState("https://diolos.com/");
   const [myDeviceUserID, setMyDeviceUserID] = useState("");
 
+  const [key, setKey] = useState(0);
+  const [isReady, setIsReady] = useState(false);
+
   let tmpDeviceUserId: string | null | undefined = null;
 
   useEffect(() => {
@@ -74,12 +77,12 @@ const App = () => {
 
     const backAction = () => {
       if (currentUrl === "https://diolos.com/" || currentUrl === "https://diolos.com/index.php") {
-        console.warn("IF", url);
+        // console.warn("IF", url);
         BackHandler.exitApp();
         return false;
       } else {
         // goBack()
-        console.warn("ELSE", url);
+        // console.warn("ELSE", url);
         webviewRef?.current?.goBack();
         return true;
       }
@@ -98,7 +101,6 @@ const App = () => {
     if (openedEvent.notification.launchURL) {
       console.log("openedEvent.notification.launchURL ==> ", openedEvent.notification.launchURL);
       setSiteUri(`${openedEvent.notification.launchURL || "https://diolos.com"}?d=${new Date().getTime()}`);
-      // setTimeout(() => setSiteUri(`${openedEvent.notification.launchURL || "https://diolos.com"}?d=${(new Date()).toISOString()}`), 500)
     } else {
       console.log("openedEvent.notification.launchURL ==> NULL");
     }
@@ -106,8 +108,18 @@ const App = () => {
 
   console.log("URL => ", url);
   console.log("myDeviceUserID1 => ", myDeviceUserID);
-  // tmpDeviceUserId && setMyDeviceUserID(tmpDeviceUserId);
-  // console.log("myDeviceUserID2 => ", myDeviceUserID);
+
+  let ready: () => Promise<any>;
+  ready = async () => {
+    const deviceState = await OneSignal.getDeviceState();
+    if (deviceState?.isSubscribed && !myDeviceUserID) return ready();
+    setIsReady(true);
+  };
+
+  if (!isReady) {
+    ready().then();
+    return <View />;
+  }
 
   return (
     <SafeAreaProvider>
@@ -121,26 +133,30 @@ const App = () => {
         )}
         <View style={styles.Container}>
           <WebView
-            onLoad={e => {
+            allowsLinkPreview={true}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+            onLoad={(e) => {
               setUrl(e.nativeEvent.url);
               currentUrl = e.nativeEvent.url;
+              setKey(key + 1);
+              // console.warn(key);
             }}
             ref={webviewRef}
-            // injectedJavaScript={INJECTEDJAVASCRIPT}
-            // scalesPageToFit={false}
-            // javaScriptEnabled={true}
             scrollEnabled={true}
             source={{
               uri: siteUri,
               headers: {
                 "Accept-Language": "fr",
                 "OneSignalUserId": myDeviceUserID,
+                "InternalTest": siteUri,
               },
             }}
             allowsBackForwardNavigationGestures={true}
             startInLoadingState={true}
             pullToRefreshEnabled={true}
           />
+          {/*<Button title="Reload Me!" onPress={() => { WebViewRef && WebViewRef.reload(); }} />*/}
         </View>
         {/*{(url !== "https://diolos.com/" && url !== "https://diolos.com/index.php") &&*/}
         {/*(*/}
@@ -161,14 +177,14 @@ const App = () => {
 const styles = StyleSheet.create({
   StatusBarForIos: {
     height: StatusBar.currentHeight,
-    backgroundColor: '#007fcb',
+    backgroundColor: "#007fcb",
   },
   Container: {
     // borderWidth: 1,
     // borderColor: '#007fcb',
     // borderColor: 'red',
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
 });
 
