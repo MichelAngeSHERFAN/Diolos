@@ -101,6 +101,7 @@ const App = () => {
     if (openedEvent.notification.launchURL) {
       console.log("openedEvent.notification.launchURL ==> ", openedEvent.notification.launchURL);
       setSiteUri(`${openedEvent.notification.launchURL || "https://diolos.com"}?d=${new Date().getTime()}`);
+      setSiteUri(`${openedEvent.notification.launchURL || "https://diolos.com"}`);
     } else {
       console.log("openedEvent.notification.launchURL ==> NULL");
     }
