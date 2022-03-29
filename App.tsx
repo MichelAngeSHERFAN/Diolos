@@ -97,17 +97,18 @@ const App = () => {
 
   }, []);
 
-  const onClickNotification = (openedEvent: OpenedEvent) => {
+  const onClickNotification = async (openedEvent: OpenedEvent) => {
     if (openedEvent.notification.launchURL) {
       console.log("openedEvent.notification.launchURL ==> ", openedEvent.notification.launchURL);
-      setSiteUri(`${openedEvent.notification.launchURL || "https://diolos.com"}?d=${new Date().getTime()}`);
-      setSiteUri(`${openedEvent.notification.launchURL || "https://diolos.com"}`);
+      await setSiteUri(`${openedEvent.notification.launchURL || "https://diolos.com"}?tmp_to_remove=${new Date().getTime()}`);
+      await setSiteUri(`${openedEvent.notification.launchURL || "https://diolos.com"}`);
     } else {
       console.log("openedEvent.notification.launchURL ==> NULL");
     }
   };
 
   console.log("URL => ", url);
+  // console.warn("URL => ", url);
   console.log("myDeviceUserID1 => ", myDeviceUserID);
 
   let ready: () => Promise<any>;

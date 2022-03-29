@@ -134,7 +134,7 @@ def enableHermes = project.ext.react.get("enableHermes", false);
 
 def versionMajor = 1
 def versionMinor = 0
-def versionBuild = 7
+def versionBuild = 8
 
 /**
  * Architectures to build native code for in debug.
